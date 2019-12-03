@@ -14,6 +14,29 @@ export default class Dashboard extends Component {
     showModal: false,
   };
 
+  componentDidMount() {
+    try {
+      const balanceChange = localStorage.getItem('transactions');
+      const ourBalance = localStorage.getItem('balance');
+      if (balanceChange) {
+        this.setState({ transactions: JSON.parse(balanceChange) });
+      }
+      if (ourBalance) {
+        this.setState({ balance: JSON.parse(ourBalance) });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { transactions, balance } = this.state;
+    if (prevState.transactions !== transactions) {
+      localStorage.setItem('transactions', JSON.stringify(transactions));
+      localStorage.setItem('balance', JSON.stringify(balance));
+    }
+  }
+
   onDeposit = moneyTransaction => {
     if (moneyTransaction === 0) {
       return toast.warn('Введите сумму для проведения операции!', {
